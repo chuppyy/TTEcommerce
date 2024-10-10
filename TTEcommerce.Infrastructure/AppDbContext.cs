@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TTEcommerce.Domain.ProductAggregate;
+using TTEcommerce.Domain.UserAggregate;
 
 namespace TTEcommerce.Infrastructure
 {

@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "TTEcommerce.Api",
+        "type": "coreclr",
+        "request": "launch",
+        "preLaunchTask": "BuildWebApi",
+        "program": "${workspaceFolder}/TTEcommerce.Api/bin/Debug/netcoreapp3.1/TTEcommerce.Api.dll",
+        "args": [],
+        "cwd": "${workspaceFolder}/TTEcommerce.Api",
+        "stopAtEntry": false,
+        "serverReadyAction": {
+          "action": "openExternally",
+          "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+        },
+        "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        },
+        "sourceFileMap": {
+          "/Views": "${workspaceFolder}/Views"
+        },
+        "dotnetRunMessages": true
+      }
+    ]
+  }
