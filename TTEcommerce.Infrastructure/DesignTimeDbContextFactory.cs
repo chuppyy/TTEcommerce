@@ -8,7 +8,7 @@ namespace TTEcommerce.Infrastructure
         public AppDbContext CreateDbContext(string[] args)
         {
             var builder = new DbContextOptionsBuilder<AppDbContext>();
-            var connectionString = "Server=your_server;Database=your_database;User=your_user;Password=your_password;";
+            var connectionString = "Server=localhost;Database=TTEcommerce;User=devops;Password=Abcd1234;";
             builder.UseMySql(connectionString);
 
             return new AppDbContext(builder.Options);

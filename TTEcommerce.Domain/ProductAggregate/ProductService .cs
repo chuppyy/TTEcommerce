@@ -39,11 +39,11 @@ namespace TTEcommerce.Domain.ProductAggregate
                 FROM Products p
                 JOIN Categories c ON p.CategoryId = c.Id
                 WHERE p.IsDeleted = 0 AND (
-                    p.Name LIKE @SearchTerm OR
-                    p.Description LIKE @SearchTerm OR
-                    c.Name LIKE @SearchTerm
+                    p.Name LIKE CONCAT('%', @SearchTerm, '%') OR
+                    p.Description LIKE CONCAT('%', @SearchTerm, '%') OR
+                    c.Name LIKE CONCAT('%', @SearchTerm, '%')
                 )",
-                new { SearchTerm = $"%{searchTerm}%" });
+                new { SearchTerm = searchTerm });
         }
 
         public async Task<IEnumerable<Product>> GetPaginatedProductsAsync(int pageNumber, int pageSize)
@@ -54,8 +54,7 @@ namespace TTEcommerce.Domain.ProductAggregate
                 JOIN Categories c ON p.CategoryId = c.Id
                 WHERE p.IsDeleted = 0
                 ORDER BY p.CreatedAt DESC
-                OFFSET @Offset ROWS
-                FETCH NEXT @PageSize ROWS ONLY",
+                LIMIT @PageSize OFFSET @Offset",
                 new { Offset = (pageNumber - 1) * pageSize, PageSize = pageSize });
         }
 

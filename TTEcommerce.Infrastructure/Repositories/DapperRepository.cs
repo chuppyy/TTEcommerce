@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -11,52 +12,44 @@ namespace TTEcommerce.Domain.Core
     public class DapperRepository<T> : IDapperRepository<T> where T : class
     {
         private readonly string _connectionString;
-        private readonly string _tableName;
 
-        public DapperRepository(IConfiguration configuration, string tableName)
+        public DapperRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
-            _tableName = tableName;
         }
 
         private IDbConnection CreateConnection()
         {
-            return new SqlConnection(_connectionString);
+            return new MySqlConnection(_connectionString);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<T> GetByIdAsync(string tableName, string id)
         {
             using var connection = CreateConnection();
-            return await connection.QueryAsync<T>($"SELECT * FROM {_tableName}");
+            return await connection.QueryFirstOrDefaultAsync<T>($"SELECT * FROM {tableName} WHERE Id = @Id", new { Id = id });
         }
 
-        public async Task<T> GetByIdAsync(string id)
+        public async Task<int> CreateAsync(string tableName, T entity)
         {
-            using var connection = CreateConnection();
-            return await connection.QueryFirstOrDefaultAsync<T>($"SELECT * FROM {_tableName} WHERE Id = @Id", new { Id = id });
-        }
-
-        public async Task<int> CreateAsync(T entity)
-        {
-            var insertQuery = GenerateInsertQuery();
+            var insertQuery = GenerateInsertQuery(tableName);
 
             using var connection = CreateConnection();
             return await connection.ExecuteAsync(insertQuery, entity);
         }
 
-        public async Task<bool> UpdateAsync(T entity)
+        public async Task<bool> UpdateAsync(string tableName, T entity)
         {
-            var updateQuery = GenerateUpdateQuery();
+            var updateQuery = GenerateUpdateQuery(tableName);
 
             using var connection = CreateConnection();
             var affected = await connection.ExecuteAsync(updateQuery, entity);
             return affected > 0;
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(string tableName, string id)
         {
             using var connection = CreateConnection();
-            var affected = await connection.ExecuteAsync($"DELETE FROM {_tableName} WHERE Id = @Id", new { Id = id });
+            var affected = await connection.ExecuteAsync($"DELETE FROM {tableName} WHERE Id = @Id", new { Id = id });
             return affected > 0;
         }
 
@@ -78,7 +71,7 @@ namespace TTEcommerce.Domain.Core
             return await connection.ExecuteAsync(sql, parameters);
         }
 
-        private string GenerateInsertQuery()
+        private string GenerateInsertQuery(string tableName)
         {
             var properties = typeof(T).GetProperties()
                 .Where(p => p.Name != "Id" && !p.PropertyType.IsClass)
@@ -87,10 +80,10 @@ namespace TTEcommerce.Domain.Core
             var columns = string.Join(", ", properties);
             var values = string.Join(", ", properties.Select(p => $"@{p}"));
 
-            return $"INSERT INTO {_tableName} ({columns}) VALUES ({values})";
+            return $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
         }
 
-        private string GenerateUpdateQuery()
+        private string GenerateUpdateQuery(string tableName)
         {
             var properties = typeof(T).GetProperties()
                 .Where(p => p.Name != "Id" && !p.PropertyType.IsClass)
@@ -98,7 +91,7 @@ namespace TTEcommerce.Domain.Core
 
             var updateSet = string.Join(", ", properties);
 
-            return $"UPDATE {_tableName} SET {updateSet} WHERE Id = @Id";
+            return $"UPDATE {tableName} SET {updateSet} WHERE Id = @Id";
         }
     }
 }
