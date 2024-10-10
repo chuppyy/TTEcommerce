@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using TTEcommerce.Domain.Core;
 
@@ -11,7 +12,6 @@ namespace TTEcommerce.Domain.ProductAggregate
         public string Name { get; private set; }
 
         [Required]
-        [StringLength(500)]
         public string Description { get; private set; }
 
         [Required]
@@ -20,6 +20,7 @@ namespace TTEcommerce.Domain.ProductAggregate
         public DateTime? UpdatedAt { get; private set; }
 
         [Required]
+        [DefaultValue(false)]
         public bool IsDeleted { get; private set; }
 
         [Required]

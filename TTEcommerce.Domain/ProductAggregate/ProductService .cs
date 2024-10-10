@@ -24,7 +24,7 @@ namespace TTEcommerce.Domain.ProductAggregate
         // Read operations using Dapper
         public async Task<Product> GetProductByIdAsync(string id)
         {
-            return await _dapperRepository.QuerySingleOrDefaultAsync(
+            return await _dapperRepository.QueryFirstOrDefaultAsync(
                 @"SELECT p.*, c.Name AS CategoryName 
                 FROM Products p 
                 JOIN Categories c ON p.CategoryId = c.Id 

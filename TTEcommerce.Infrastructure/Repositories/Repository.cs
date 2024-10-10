@@ -21,7 +21,7 @@ namespace TTEcommerce.Infrastructure.Repositories
 
         public T GetById(string id)
         {
-            return _entities.SingleOrDefault(e => e.Id == id);
+            return _entities.FirstOrDefault(e => e.Id == id);
         }
 
         public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
@@ -55,7 +55,7 @@ namespace TTEcommerce.Infrastructure.Repositories
 
         public async Task<T> GetByIdAsync(string id)
         {
-            var entity = await _entities.SingleOrDefaultAsync(e => e.Id == id);
+            var entity = await _entities.FirstOrDefaultAsync(e => e.Id == id);
             return entity;
         }
     }

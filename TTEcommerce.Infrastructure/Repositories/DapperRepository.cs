@@ -33,7 +33,7 @@ namespace TTEcommerce.Domain.Core
         public async Task<T> GetByIdAsync(string id)
         {
             using var connection = CreateConnection();
-            return await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {_tableName} WHERE Id = @Id", new { Id = id });
+            return await connection.QueryFirstOrDefaultAsync<T>($"SELECT * FROM {_tableName} WHERE Id = @Id", new { Id = id });
         }
 
         public async Task<int> CreateAsync(T entity)
@@ -66,10 +66,10 @@ namespace TTEcommerce.Domain.Core
             return await connection.QueryAsync<T>(sql, parameters);
         }
 
-        public async Task<T> QuerySingleOrDefaultAsync(string sql, object parameters = null)
+        public async Task<T> QueryFirstOrDefaultAsync(string sql, object parameters = null)
         {
             using var connection = CreateConnection();
-            return await connection.QuerySingleOrDefaultAsync<T>(sql, parameters);
+            return await connection.QueryFirstOrDefaultAsync<T>(sql, parameters);
         }
 
         public async Task<int> ExecuteAsync(string sql, object parameters = null)
