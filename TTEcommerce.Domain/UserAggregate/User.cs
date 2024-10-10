@@ -18,8 +18,5 @@ namespace TTEcommerce.Domain.UserAggregate
         public string Password { get; set; }
         [Required]
         public int StatusId { get; set; }
-        [Required]
-        [DefaultValue(false)]
-        public bool IsDeleted { get; set; }
     }
 }
