@@ -1,15 +1,25 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-	  {
-		"label": "BuildWebApi",
-		"command": "dotnet",
-		"type": "process",
-		"args": [
-		  "build",
-		  "${workspaceFolder}/TTEcommerce.Api/TTEcommerce.Api.csproj"
-		],
-		"problemMatcher": "$msCompile"
-	  }
-	]
-  }
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "BuildWebApi",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/TTEcommerce.Api/TTEcommerce.Api.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "BuildBlazorApp",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/TTEcommerce.Blazor/TTEcommerce.Blazor.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
