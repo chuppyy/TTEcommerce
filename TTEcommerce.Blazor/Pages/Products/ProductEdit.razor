@@ -1,0 +1,50 @@
+
+@page "/products/edit/{id}"
+@inject ProductService ProductService
+@inject NavigationManager Navigation
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private ProductDto product = new ProductDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await ProductService.GetProductByIdAsync(Id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await ProductService.UpdateProductAsync(Id, product);
+        Navigation.NavigateTo("/products");
+    }
+}
+
+<h3>Edit Product</h3>
+
+<EditForm Model="product" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Name:</label>
+        <InputText class="form-control" @bind-Value="product.Name" />
+    </div>
+    <div class="form-group">
+        <label>Description:</label>
+        <InputTextArea class="form-control" @bind-Value="product.Description" />
+    </div>
+    <div class="form-group">
+        <label>Image URL:</label>
+        <InputText class="form-control" @bind-Value="product.ImageUrl" />
+    </div>
+    <div class="form-group">
+        <label>Net Weight:</label>
+        <InputNumber class="form-control" @bind-Value="product.NetWeight" />
+    </div>
+    <div class="form-group">
+        <label>Category ID:</label>
+        <InputText class="form-control" @bind-Value="product.CategoryId" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>

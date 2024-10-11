@@ -1,0 +1,27 @@
+
+@page "/categories/create"
+@inject CategoryService CategoryService
+@inject NavigationManager Navigation
+
+<h3>Create Category</h3>
+
+<EditForm Model="category" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Name:</label>
+        <InputText class="form-control" @bind-Value="category.Name" />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</EditForm>
+
+@code {
+    private CategoryDto category = new CategoryDto();
+
+    private async Task HandleValidSubmit()
+    {
+        await CategoryService.CreateCategoryAsync(category);
+        Navigation.NavigateTo("/categories");
+    }
+}

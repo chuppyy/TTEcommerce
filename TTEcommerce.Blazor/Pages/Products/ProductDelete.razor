@@ -1,0 +1,32 @@
+@page "/products/delete/{id}"
+@inject ProductService ProductService
+@inject NavigationManager Navigation
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private ProductDto product = new ProductDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await ProductService.GetProductByIdAsync(Id);
+    }
+
+    private async Task DeleteProduct()
+    {
+        await ProductService.DeleteProductAsync(Id);
+        Navigation.NavigateTo("/products");
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/products");
+    }
+}
+
+<h3>Delete Product</h3>
+
+<p>Are you sure you want to delete the product <strong>@product.Name</strong>?</p>
+
+<button class="btn btn-danger" @onclick="DeleteProduct">Delete</button>
+<button class="btn btn-secondary" @onclick="Cancel">Cancel</button>

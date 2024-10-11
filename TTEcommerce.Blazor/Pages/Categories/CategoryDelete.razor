@@ -1,0 +1,27 @@
+@page "/categories/delete/{id}"
+@inject CategoryService CategoryService
+@inject NavigationManager Navigation
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private CategoryDto category = new CategoryDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        category = await CategoryService.GetCategoryByIdAsync(Id);
+    }
+
+    private async Task DeleteCategory()
+    {
+        await CategoryService.DeleteCategoryAsync(Id);
+        Navigation.NavigateTo("/categories");
+    }
+}
+
+<h3>Delete Category</h3>
+
+<p>Are you sure you want to delete the category <strong>@category.Name</strong>?</p>
+
+<button class="btn btn-danger" @onclick="DeleteCategory">Delete</button>
+<button class="btn btn-secondary" @onclick='() => Navigation.NavigateTo("/categories")'>Cancel</button>

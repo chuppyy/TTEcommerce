@@ -1,0 +1,44 @@
+
+@page "/products"
+@inject ProductService ProductService
+
+<h3>Product List</h3>
+
+@if (products == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.Description</td>
+                    <td>
+                        <a href="/products/edit/@product.Id">Edit</a> |
+                        <a href="/products/delete/@product.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<ProductDto> products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await ProductService.GetProductsAsync();
+    }
+}

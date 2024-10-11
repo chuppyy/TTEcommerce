@@ -1,0 +1,33 @@
+@page "/categories/edit/{id}"
+@inject CategoryService CategoryService
+@inject NavigationManager Navigation
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private CategoryDto category = new CategoryDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        category = await CategoryService.GetCategoryByIdAsync(Id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await CategoryService.UpdateCategoryAsync(Id, category);
+        Navigation.NavigateTo("/categories");
+    }
+}
+
+<h3>Edit Category</h3>
+
+<EditForm Model="category" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Name:</label>
+        <InputText class="form-control" @bind-Value="category.Name" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</EditForm>
