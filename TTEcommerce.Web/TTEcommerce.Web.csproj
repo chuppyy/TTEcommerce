@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TTEcommerce.Core\TTEcommerce.Core.csproj" />
     <ProjectReference Include="..\TTEcommerce.Infrastructure\TTEcommerce.Infrastructure.csproj" />
   </ItemGroup>
 
