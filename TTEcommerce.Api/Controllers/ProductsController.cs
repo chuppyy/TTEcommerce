@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TTEcommerce.Domain.ProductAggregate;
+using TTEcommerce.Application.Dtos;
+using TTEcommerce.Application.Interfaces;
 
 namespace TTEcommerce.Api.Controllers
 {
@@ -17,7 +18,7 @@ namespace TTEcommerce.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProductById(string id)
+        public async Task<ActionResult<ProductDto>> GetProductById(string id)
         {
             var product = await _productService.GetProductByIdAsync(id);
             if (product == null)
@@ -28,21 +29,21 @@ namespace TTEcommerce.Api.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Product>>> SearchProducts([FromQuery] string searchTerm)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> SearchProducts([FromQuery] string searchTerm)
         {
             var products = await _productService.SearchProductsAsync(searchTerm);
             return Ok(products);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetPaginatedProducts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetPaginatedProducts([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var products = await _productService.GetPaginatedProductsAsync(pageNumber, pageSize);
             return Ok(products);
         }
 
         [HttpGet("category/{categoryId}")]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProductsByCategory(string categoryId)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProductsByCategory(string categoryId)
         {
             var products = await _productService.GetProductsByCategoryAsync(categoryId);
             return Ok(products);

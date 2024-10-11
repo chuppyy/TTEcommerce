@@ -8,6 +8,9 @@ using TTEcommerce.Domain.Core;
 using TTEcommerce.Domain.ProductAggregate;
 using TTEcommerce.Infrastructure;
 using TTEcommerce.Infrastructure.Repositories;
+using TTEcommerce.Application.Interfaces;
+using TTEcommerce.Application.Services;
+using TTEcommerce.Application.Dtos;
 
 namespace TTEcommerce.Api
 {
@@ -25,9 +28,11 @@ namespace TTEcommerce.Api
         {
             services.AddControllers();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IRepository<Product>, Repository<Product>>();
             services.AddScoped<IRepository<Category>, Repository<Category>>();
-            services.AddScoped<IDapperRepository<Product>, DapperRepository<Product>>();
+            services.AddScoped<IDapperRepository<ProductDto>, DapperRepository<ProductDto>>();
+            services.AddScoped<IDapperRepository<CategoryDto>, DapperRepository<CategoryDto>>();
             services.AddDbContext<DbContext, AppDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
         }
 

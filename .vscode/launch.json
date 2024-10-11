@@ -31,10 +31,6 @@
             "args": [],
             "cwd": "${workspaceFolder}/TTEcommerce.Blazor",
             "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },

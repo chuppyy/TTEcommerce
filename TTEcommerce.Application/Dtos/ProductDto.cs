@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TTEcommerce.Domain.ProductAggregate
+namespace TTEcommerce.Application.Dtos
 {
     public class ProductDto
     {
