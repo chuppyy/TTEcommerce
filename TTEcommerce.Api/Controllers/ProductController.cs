@@ -8,11 +8,11 @@ namespace TTEcommerce.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
 
-        public ProductsController(IProductService productService)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }
@@ -47,6 +47,35 @@ namespace TTEcommerce.Api.Controllers
         {
             var products = await _productService.GetProductsByCategoryAsync(categoryId);
             return Ok(products);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] ProductDto productDto)
+        {
+            var createdProduct = await _productService.CreateProductAsync(productDto);
+            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(string id, [FromBody] ProductDto productDto)
+        {
+            var updatedProduct = await _productService.UpdateProductAsync(id, productDto);
+            if (updatedProduct == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(string id)
+        {
+            var deleted = await _productService.DeleteProductAsync(id);
+            if (!deleted)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }

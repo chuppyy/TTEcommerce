@@ -43,15 +43,22 @@ namespace TTEcommerce.Application.Services
                 new { SearchTerm = searchTerm });
         }
 
-        public async Task<IEnumerable<CategoryDto>> GetPaginatedCategoriesAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<CategoryDto>> GetPaginatedCategoriesAsync(int pageNumber, int pageSize)
         {
-            return await _dapperRepository.QueryAsync(
+            var categories = await _dapperRepository.QueryAsync(
                 @"SELECT * 
                 FROM Categories 
                 WHERE IsDeleted = 0
                 ORDER BY CreatedAt DESC
                 LIMIT @PageSize OFFSET @Offset",
                 new { Offset = (pageNumber - 1) * pageSize, PageSize = pageSize });
+
+            var totalRecords = await _dapperRepository.QueryFirstOrDefaultAsync<int>(
+                @"SELECT COUNT(*) 
+                FROM Categories 
+                WHERE IsDeleted = 0");
+
+            return new PaginatedResult<CategoryDto>(categories, totalRecords, pageSize);
         }
 
         // Write operations using IRepository<Category>

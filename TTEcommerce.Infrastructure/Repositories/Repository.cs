@@ -21,7 +21,7 @@ namespace TTEcommerce.Infrastructure.Repositories
 
         public T GetById(string id)
         {
-            return _entities.FirstOrDefault(e => e.Id == id);
+            return _entities.SingleOrDefault(e => e.Id == id);
         }
 
         public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
@@ -55,8 +55,48 @@ namespace TTEcommerce.Infrastructure.Repositories
 
         public async Task<T> GetByIdAsync(string id)
         {
-            var entity = await _entities.FirstOrDefaultAsync(e => e.Id == id);
-            return entity;
+            return await _entities.SingleOrDefaultAsync(e => e.Id == id);
+        }
+
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _entities.Where(predicate).ToListAsync();
+        }
+
+        public async Task AddAsync(T entity)
+        {
+            await _entities.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _entities.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveAsync(T entity)
+        {
+            _entities.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveRangeAsync(IEnumerable<T> entities)
+        {
+            _entities.RemoveRange(entities);
+            await _context.SaveChangesAsync();
+        }
+
+        public void Update(T entity)
+        {
+            _entities.Update(entity);
+            _context.SaveChanges();
+        }
+
+        public async Task UpdateAsync(T entity)
+        {
+            _entities.Update(entity);
+            await _context.SaveChangesAsync();
         }
     }
 }

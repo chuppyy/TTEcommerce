@@ -8,7 +8,7 @@ namespace TTEcommerce.Application.Interfaces
     {
         Task<CategoryDto> GetCategoryByIdAsync(string id);
         Task<IEnumerable<CategoryDto>> SearchCategoriesAsync(string searchTerm);
-        Task<IEnumerable<CategoryDto>> GetPaginatedCategoriesAsync(int pageNumber, int pageSize);
+        Task<PaginatedResult<CategoryDto>> GetPaginatedCategoriesAsync(int pageNumber, int pageSize);
         Task CreateCategoryAsync(CategoryDto categoryDto);
         Task UpdateCategoryAsync(string id, CategoryDto categoryDto);
         Task DeleteCategoryAsync(string id);

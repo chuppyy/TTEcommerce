@@ -4,7 +4,6 @@ namespace TTEcommerce.Application.Dtos
 {
     public class CategoryDto
     {
-        [Required]
         public string Id { get; set; }
 
         [Required]

@@ -1,0 +1,30 @@
+@code {
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int TotalPages { get; set; }
+    [Parameter] public EventCallback<int> OnPageSelected { get; set; }
+
+    private async Task SelectPage(int page)
+    {
+        if (page >= 1 && page <= TotalPages)
+        {
+            await OnPageSelected.InvokeAsync(page);
+        }
+    }
+}
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link" @onclick="() => SelectPage(CurrentPage - 1)">Previous</a>
+        </li>
+        @for (int i = 1; i <= TotalPages; i++)
+        {
+            <li class="page-item @(CurrentPage == i ? "active" : "")">
+                <a class="page-link" @onclick="() => SelectPage(i)">@i</a>
+            </li>
+        }
+        <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+            <a class="page-link" @onclick="() => SelectPage(CurrentPage + 1)">Next</a>
+        </li>
+    </ul>
+</nav>

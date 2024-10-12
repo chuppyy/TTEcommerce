@@ -1,9 +1,10 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TTEcommerce.Application.Services;
+using TTEcommerce.Blazor.Services;
 
 namespace TTEcommerce.Blazor
 {
@@ -20,6 +21,10 @@ namespace TTEcommerce.Blazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddHttpClient("TTEcommerceClient", client =>
+            {
+                client.BaseAddress = new Uri(Configuration["ApiUrl"]);
+            });
             services.AddScoped<ProductService>();
             services.AddScoped<CategoryService>();
         }

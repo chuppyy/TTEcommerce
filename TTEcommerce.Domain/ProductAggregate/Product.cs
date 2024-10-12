@@ -47,6 +47,7 @@ namespace TTEcommerce.Domain.ProductAggregate
             CreatedAt = DateTime.UtcNow;
             IsDeleted = false;
             CategoryId = categoryId;
+            Id = StrHelper.GenRndStr();
         }
 
         public void UpdateDetails(string name, string description, string imageUrl, decimal netWeight, string categoryId)

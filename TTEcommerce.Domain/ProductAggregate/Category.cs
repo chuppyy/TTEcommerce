@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using TTEcommerce.Domain.Core;
 
@@ -13,9 +15,17 @@ namespace TTEcommerce.Domain.ProductAggregate
         [StringLength(500)]
         public string Description { get; private set; }
 
-        public ICollection<Product> Products { get; private set; }
+        [Required]
+        public DateTime CreatedAt { get; private set; }
 
+        public DateTime? UpdatedAt { get; private set; }
+
+        [Required]
+        [DefaultValue(false)]
         public bool IsDeleted { get; private set; }
+
+
+        public ICollection<Product> Products { get; private set; }
 
         protected Category() { } // Protected constructor for EF Core
 
@@ -25,6 +35,7 @@ namespace TTEcommerce.Domain.ProductAggregate
             Description = description;
             Products = new List<Product>();
             IsDeleted = false;
+            Id = StrHelper.GenRndStr();
         }
 
         public void Delete()

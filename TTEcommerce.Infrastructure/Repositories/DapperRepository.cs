@@ -64,6 +64,19 @@ namespace TTEcommerce.Domain.Core
             using var connection = CreateConnection();
             return await connection.QueryFirstOrDefaultAsync<T>(sql, parameters);
         }
+        
+        public async Task<IEnumerable<TResult>> QueryAsync<TResult>(string sql, object parameters = null)
+        {
+            var connection = CreateConnection();
+            return await connection.QueryAsync<TResult>(sql, parameters);
+        }
+
+        public async Task<TResult> QueryFirstOrDefaultAsync<TResult>(string sql, object parameters = null)
+        {
+            var connection = CreateConnection();
+            return await connection.QueryFirstOrDefaultAsync<TResult>(sql, parameters);
+        }
+
 
         public async Task<int> ExecuteAsync(string sql, object parameters = null)
         {

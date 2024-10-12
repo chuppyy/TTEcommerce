@@ -49,18 +49,25 @@ namespace TTEcommerce.Application.Services
                 new { SearchTerm = searchTerm });
         }
 
-        public async Task<IEnumerable<ProductDto>> GetPaginatedProductsAsync(int pageNumber, int pageSize)
+        public async Task<PaginatedResult<ProductDto>> GetPaginatedProductsAsync(int pageNumber, int pageSize)
         {
-            return await _dapperRepository.QueryAsync(
-                @"SELECT p.*, c.Name AS CategoryName 
+            var totalCount = await _dapperRepository.QueryFirstOrDefaultAsync<int>(
+                        @"SELECT COUNT(*) 
+                FROM Products 
+                WHERE IsDeleted = 0");
+
+            var products = await _dapperRepository.QueryAsync<ProductDto>(
+                        @"SELECT p.*, c.Name AS CategoryName 
                 FROM Products p
                 JOIN Categories c ON p.CategoryId = c.Id
                 WHERE p.IsDeleted = 0
                 ORDER BY p.CreatedAt DESC
                 LIMIT @PageSize OFFSET @Offset",
                 new { Offset = (pageNumber - 1) * pageSize, PageSize = pageSize });
-        }
 
+            return new PaginatedResult<ProductDto>(products, totalCount, pageSize);
+        }
+        
         public async Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(string categoryId)
         {
             return await _dapperRepository.QueryAsync(
@@ -81,6 +88,7 @@ namespace TTEcommerce.Application.Services
             }
 
             var product = new Product(
+
                 productDto.Name,
                 productDto.Description,
                 productDto.ImageUrl,
@@ -88,14 +96,13 @@ namespace TTEcommerce.Application.Services
                 productDto.CategoryId
             );
 
-            _repository.Add(product);
-            await Task.CompletedTask; // Simulating async operation
+            await _repository.AddAsync(product);
             return product;
         }
 
-        public async Task UpdateProductAsync(string id, ProductDto productDto)
+        public async Task<Product> UpdateProductAsync(string id, ProductDto productDto)
         {
-            var product = await Task.FromResult(_repository.GetById(id));
+            var product = await _repository.GetByIdAsync(id);
             if (product == null || product.IsDeleted)
             {
                 throw new ArgumentException("Product not found");
@@ -115,10 +122,12 @@ namespace TTEcommerce.Application.Services
                 productDto.CategoryId
             );
 
-            await Task.CompletedTask; // Simulating async operation
+            await _repository.UpdateAsync(product);
+
+            return product;
         }
 
-        public async Task DeleteProductAsync(string id)
+        public async Task<bool> DeleteProductAsync(string id)
         {
             var product = await _repository.GetByIdAsync(id);
             if (product == null || product.IsDeleted)
@@ -127,8 +136,9 @@ namespace TTEcommerce.Application.Services
             }
 
             product.Delete();
-            await Task.CompletedTask; // Simulating async operation
-        }
+            await _repository.UpdateAsync(product);
 
+            return true;
+        }
     }
 }

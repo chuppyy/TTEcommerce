@@ -12,6 +12,7 @@ using TTEcommerce.Application.Interfaces;
 using TTEcommerce.Application.Services;
 using TTEcommerce.Application.Dtos;
 
+
 namespace TTEcommerce.Api
 {
     public class Startup
@@ -26,7 +27,12 @@ namespace TTEcommerce.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                    .AddNewtonsoftJson(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                    });
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IRepository<Product>, Repository<Product>>();

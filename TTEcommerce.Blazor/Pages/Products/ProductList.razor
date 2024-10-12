@@ -1,4 +1,3 @@
-
 @page "/products"
 @inject ProductService ProductService
 
@@ -32,13 +31,30 @@ else
             }
         </tbody>
     </table>
+    <Pagination CurrentPage="currentPage" TotalPages="totalPages" OnPageSelected="LoadPage" />
 }
 
 @code {
     private IEnumerable<ProductDto> products;
+    private int currentPage = 1;
+    private int totalPages;
+    private int pageSize = 5;
 
     protected override async Task OnInitializedAsync()
     {
-        products = await ProductService.GetProductsAsync();
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        var paginatedResult = await ProductService.GetPaginatedProductsAsync(currentPage, pageSize);
+        products = paginatedResult.Items;
+        totalPages = paginatedResult.TotalPages;
+    }
+
+    private async Task LoadPage(int page)
+    {
+        currentPage = page;
+        await LoadProducts();
     }
 }

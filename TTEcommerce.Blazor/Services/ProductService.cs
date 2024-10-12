@@ -8,36 +8,59 @@ namespace TTEcommerce.Blazor.Services
 {
     public class ProductService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public ProductService(HttpClient httpClient)
+        public ProductService(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductsAsync()
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<ProductDto>>("api/products");
+            var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
+            return await httpClient.GetFromJsonAsync<IEnumerable<ProductDto>>("api/product");
         }
 
         public async Task<ProductDto> GetProductByIdAsync(string id)
         {
-            return await _httpClient.GetFromJsonAsync<ProductDto>($"api/products/{id}");
+            var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
+            return await httpClient.GetFromJsonAsync<ProductDto>($"api/product/{id}");
+        }
+
+        public async Task<IEnumerable<ProductDto>> SearchProductsAsync(string searchTerm)
+        {
+            var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
+            return await httpClient.GetFromJsonAsync<IEnumerable<ProductDto>>($"api/product/search?searchTerm={searchTerm}");
+        }
+
+        public async Task<PaginatedResult<ProductDto>> GetPaginatedProductsAsync(int pageNumber, int pageSize)
+        {
+            var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
+            return await httpClient.GetFromJsonAsync<PaginatedResult<ProductDto>>($"api/product?pageNumber={pageNumber}&pageSize={pageSize}");
+        }
+
+        public async Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(string categoryId)
+        {
+            var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
+            return await httpClient.GetFromJsonAsync<IEnumerable<ProductDto>>($"api/product/category/{categoryId}");
         }
 
         public async Task CreateProductAsync(ProductDto product)
         {
-            await _httpClient.PostAsJsonAsync("api/products", product);
+            var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
+            await httpClient.PostAsJsonAsync("api/product", product);
         }
 
         public async Task UpdateProductAsync(string id, ProductDto product)
         {
-            await _httpClient.PutAsJsonAsync($"api/products/{id}", product);
+            var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
+            await httpClient.PutAsJsonAsync($"api/product/{id}", product);
         }
 
         public async Task DeleteProductAsync(string id)
         {
-            await _httpClient.DeleteAsync($"api/products/{id}");
+            var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
+            await httpClient.DeleteAsync($"api/product/{id}");
         }
     }
 }

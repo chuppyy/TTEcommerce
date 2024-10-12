@@ -1,11 +1,17 @@
 @page "/categories"
 @inject CategoryService CategoryService
+@inject NavigationManager NavigationManager
 
 <h3>Category List</h3>
 
-@if (categories == null)
+@if (isLoading)
 {
     <p><em>Loading...</em></p>
+}
+else if (categories == null || !categories.Any())
+{
+    <p><em>There are no categories to display.</em></p>
+    <button @onclick="CreateNewCategory">Create New Category</button>
 }
 else
 {
@@ -29,13 +35,38 @@ else
             }
         </tbody>
     </table>
+    <Pagination CurrentPage="currentPage" TotalPages="totalPages" OnPageSelected="LoadPage" />
 }
 
 @code {
     private IEnumerable<CategoryDto> categories;
+    private int currentPage = 1;
+    private int totalPages;
+    private int pageSize = 5;
+    private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        categories = await CategoryService.GetCategoriesAsync();
+        await LoadPage(currentPage);
+    }
+
+    private async Task LoadCategories()
+    {
+        isLoading = true;
+        var paginatedResult = await CategoryService.GetPaginatedCategoriesAsync(currentPage, pageSize);
+        categories = paginatedResult.Items;
+        totalPages = paginatedResult.TotalPages;
+        isLoading = false;
+    }
+
+    private async Task LoadPage(int page)
+    {
+        currentPage = page;
+        await LoadCategories();
+    }
+
+    private void CreateNewCategory()
+    {
+        NavigationManager.NavigateTo("/categories/create");
     }
 }

@@ -10,7 +10,9 @@ namespace TTEcommerce.Domain.Core
         Task<bool> UpdateAsync(string tableName, T entity);
         Task<bool> DeleteAsync(string tableName, string id);
         Task<IEnumerable<T>> QueryAsync(string sql, object parameters = null);
+        Task<IEnumerable<TResult>> QueryAsync<TResult>(string sql, object parameters = null);
         Task<T> QueryFirstOrDefaultAsync(string sql, object parameters = null);
+        Task<TResult> QueryFirstOrDefaultAsync<TResult>(string sql, object parameters = null);
         Task<int> ExecuteAsync(string sql, object parameters = null);
     }
 }
