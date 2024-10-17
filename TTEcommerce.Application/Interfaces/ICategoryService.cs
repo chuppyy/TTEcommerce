@@ -11,6 +11,6 @@ namespace TTEcommerce.Application.Interfaces
         Task<PaginatedResult<CategoryDto>> GetPaginatedCategoriesAsync(int pageNumber, int pageSize);
         Task CreateCategoryAsync(CategoryDto categoryDto);
         Task UpdateCategoryAsync(string id, CategoryDto categoryDto);
-        Task DeleteCategoryAsync(string id);
+        Task DeleteCategoryAsync(IEnumerable<string> ids);
     }
 }

@@ -98,5 +98,17 @@ namespace TTEcommerce.Infrastructure.Repositories
             _entities.Update(entity);
             await _context.SaveChangesAsync();
         }
+
+        public void UpdateRange(IEnumerable<T> entities)
+        {
+            _entities.UpdateRange(entities);
+            _context.SaveChanges();
+        }
+
+        public async Task UpdateRangeAsync(IEnumerable<T> entities)
+        {
+            _entities.UpdateRange(entities);
+            await _context.SaveChangesAsync();
+        }
     }
 }

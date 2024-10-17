@@ -20,5 +20,7 @@ namespace TTEcommerce.Application.Dtos
 
         [Required]
         public string CategoryId { get; set; }
+
+        public bool IsSelected { get; set; }
     }
 }

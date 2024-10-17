@@ -102,16 +102,28 @@ namespace TTEcommerce.Application.Services
             await _repository.UpdateAsync(category);
         }
 
-        public async Task DeleteCategoryAsync(string id)
+    public async Task DeleteCategoryAsync(IEnumerable<string> ids)
+    {
+        var categories = new List<Category>();
+
+        foreach (var id in ids)
         {
             var category = await _repository.GetByIdAsync(id);
             if (category == null || category.IsDeleted)
             {
-                throw new NotFoundException($"Category with ID {id} not found");
+                _logger.LogWarning($"Category with ID {id} not found or already deleted");
+                continue;
             }
-
             category.Delete();
-            await _repository.UpdateAsync(category);
+            categories.Add(category);
         }
+
+        if (categories.Count == 0)
+        {
+            throw new NotFoundException("No valid categories found for deletion");
+        }
+
+        await _repository.UpdateRangeAsync(categories);
+    }
     }
 }

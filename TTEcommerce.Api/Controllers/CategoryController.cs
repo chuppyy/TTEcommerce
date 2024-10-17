@@ -56,10 +56,10 @@ namespace TTEcommerce.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCategory(string id)
+        [HttpDelete]
+        public async Task<ActionResult> DeleteCategories([FromBody] IEnumerable<string> ids)
         {
-            await _categoryService.DeleteCategoryAsync(id);
+            await _categoryService.DeleteCategoryAsync(ids);
             return NoContent();
         }
     }

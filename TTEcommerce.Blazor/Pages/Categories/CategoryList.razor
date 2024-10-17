@@ -15,9 +15,11 @@ else if (categories == null || !categories.Any())
 }
 else
 {
+    <button @onclick="DeleteSelectedCategories" class="btn btn-danger mb-3">Delete Selected</button>
     <table class="table">
         <thead>
             <tr>
+                <th><input type="checkbox" @onchange="SelectAllCategories" /></th>
                 <th>Name</th>
                 <th>Actions</th>
             </tr>
@@ -26,10 +28,10 @@ else
             @foreach (var category in categories)
             {
                 <tr>
+                    <td><input type="checkbox" @bind="category.IsSelected" /></td>
                     <td>@category.Name</td>
                     <td>
-                        <a href="/categories/edit/@category.Id">Edit</a> |
-                        <a href="/categories/delete/@category.Id">Delete</a>
+                        <a href="/categories/edit/@category.Id">Edit</a>
                     </td>
                 </tr>
             }
@@ -63,6 +65,53 @@ else
     {
         currentPage = page;
         await LoadCategories();
+    }
+
+    private void CreateNewCategory()
+    {
+        NavigationManager.NavigateTo("/categories/create");
+    }
+
+    private async Task DeleteSelectedCategories()
+    {
+        var selectedIds = categories.Where(c => c.IsSelected).Select(c => c.Id).ToList();
+        if (selectedIds.Any())
+        {
+            await CategoryService.DeleteCategoryAsync(selectedIds);
+            
+            // Check if we need to go to the previous page
+            var remainingCategories = categories.Count() - selectedIds.Count;
+            if (remainingCategories > 0 && remainingCategories <= (currentPage - 1) * pageSize)
+            {
+                currentPage--;
+            }
+
+            await LoadPage(currentPage);
+        }
+    }
+
+    private void SelectAllCategories(ChangeEventArgs e)
+    {
+        bool isChecked = (bool)e.Value;
+        foreach (var category in categories)
+        {
+            category.IsSelected = isChecked;
+        }
+    }
+
+    private async Task LoadPage(int page)
+    {
+        currentPage = page;
+        await LoadCategories();
+    }
+
+    private async Task LoadCategories()
+    {
+        isLoading = true;
+        var paginatedResult = await CategoryService.GetPaginatedCategoriesAsync(currentPage, pageSize);
+        categories = paginatedResult.Items;
+        totalPages = paginatedResult.TotalPages;
+        isLoading = false;
     }
 
     private void CreateNewCategory()

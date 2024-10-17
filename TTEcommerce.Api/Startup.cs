@@ -7,6 +7,9 @@ using Microsoft.Extensions.Hosting;
 using TTEcommerce.Infrastructure;
 using TTEcommerce.Application.Extensions;
 using TTEcommerce.Api.Middleware;
+using TTEcommerce.Infrastructure.Extensions;
+using TTEcommerce.Domain.ProductAggregate;
+using TTEcommerce.Application.Dtos;
 
 namespace TTEcommerce.Api
 {
@@ -28,6 +31,10 @@ namespace TTEcommerce.Api
                         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                         options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
                     });
+            services.AddRepository<Product>();
+            services.AddRepository<Category>();
+            services.AddDapperRepository<ProductDto>();
+            services.AddDapperRepository<CategoryDto>();
             services.AddApplication();
             services.AddDbContext<DbContext, AppDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
         }

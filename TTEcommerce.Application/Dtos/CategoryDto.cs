@@ -12,5 +12,7 @@ namespace TTEcommerce.Application.Dtos
 
         [StringLength(500)]
         public string Description { get; set; }
+
+        public bool IsSelected { get; set; }
     }
 }

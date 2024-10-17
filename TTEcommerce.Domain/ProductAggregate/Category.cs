@@ -36,17 +36,20 @@ namespace TTEcommerce.Domain.ProductAggregate
             Products = new List<Product>();
             IsDeleted = false;
             Id = StrHelper.GenRndStr();
+            CreatedAt = DateTime.UtcNow;
         }
 
         public void Delete()
         {
             IsDeleted = true;
+            UpdatedAt = DateTime.UtcNow;
         }
 
         public void UpdateDetails(string newName, string newDescription)
         {
             Name = newName;
             Description = newDescription;
+            UpdatedAt = DateTime.UtcNow;
         }
     }
 }

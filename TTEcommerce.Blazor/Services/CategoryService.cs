@@ -51,10 +51,18 @@ namespace TTEcommerce.Blazor.Services
             await httpClient.PutAsync($"api/category/{id}", content);
         }
 
-        public async Task DeleteCategoryAsync(string id)
+        public async Task DeleteCategoryAsync(IEnumerable<string> ids)
         {
             var httpClient = _httpClientFactory.CreateClient("TTEcommerceClient");
-            await httpClient.DeleteAsync($"api/category/{id}");
+            var content = new StringContent(JsonConvert.SerializeObject(ids), Encoding.UTF8, "application/json");
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, "api/category")
+            {
+                Content = content
+            };
+
+            var response = await httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

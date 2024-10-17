@@ -10,9 +10,11 @@ namespace TTEcommerce.Blazor
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _environment;
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            _environment = environment;
         }
 
         public IConfiguration Configuration { get; }
@@ -22,9 +24,13 @@ namespace TTEcommerce.Blazor
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddHttpClient("TTEcommerceClient", client =>
-            {
-                client.BaseAddress = new Uri(Configuration["ApiUrl"]);
-            });
+             {
+                 client.BaseAddress = new Uri(Configuration["ApiUrl"]);
+                 if (_environment.IsDevelopment())
+                 {
+                     client.DefaultRequestHeaders.Add("X-Github-Token", Configuration["GitHubToken"]);
+                 }
+             });
             services.AddScoped<ProductService>();
             services.AddScoped<CategoryService>();
         }

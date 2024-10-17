@@ -21,5 +21,7 @@ namespace TTEcommerce.Domain.Core
         Task RemoveRangeAsync(IEnumerable<T> entities);
         void Update(T entity);
         Task UpdateAsync(T entity);
+        void UpdateRange(IEnumerable<T> entities);
+        Task UpdateRangeAsync(IEnumerable<T> entities);
     }
 }

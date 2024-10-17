@@ -32,5 +32,12 @@
             },
             "dotnetRunMessages": true
         }
+    ],
+    "compounds": [
+        {
+            "name": "Debug API and Blazor",
+            "configurations": ["TTEcommerce.Api", "TTEcommerce.Blazor"],
+            "stopAll": true
+        }
     ]
 }

@@ -14,7 +14,7 @@
 
     private async Task DeleteCategory()
     {
-        await CategoryService.DeleteCategoryAsync(Id);
+        await CategoryService.DeleteCategoryAsync(new List<string> { Id });
         Navigation.NavigateTo("/categories");
     }
 }
