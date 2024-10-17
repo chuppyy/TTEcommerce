@@ -5,6 +5,8 @@ using TTEcommerce.Domain.Core;
 using TTEcommerce.Domain.ProductAggregate;
 using TTEcommerce.Application.Interfaces;
 using TTEcommerce.Application.Dtos;
+using Microsoft.Extensions.Logging;
+using TTEcommerce.Application.Exceptions;
 
 namespace TTEcommerce.Application.Services
 {
@@ -12,13 +14,16 @@ namespace TTEcommerce.Application.Services
     {
         private readonly IDapperRepository<CategoryDto> _dapperRepository;
         private readonly IRepository<Category> _repository;
+        private readonly ILogger<CategoryService> _logger;
 
         public CategoryService(
             IDapperRepository<CategoryDto> dapperRepository,
-            IRepository<Category> repository)
+            IRepository<Category> repository,
+            ILogger<CategoryService> logger)
         {
             _dapperRepository = dapperRepository;
             _repository = repository;
+            _logger = logger;
         }
 
         // Read operations using Dapper
@@ -64,21 +69,29 @@ namespace TTEcommerce.Application.Services
         // Write operations using IRepository<Category>
         public async Task CreateCategoryAsync(CategoryDto categoryDto)
         {
-            var category = new Category(
-                categoryDto.Name,
-                categoryDto.Description
-            );
+            try
+            {
+                var category = new Category(
+                    categoryDto.Name,
+                    categoryDto.Description
+                );
 
-            _repository.Add(category);
-            await Task.CompletedTask; // Simulating async operation
+                _repository.Add(category);
+                await Task.CompletedTask; // Simulating async operation
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while creating a category");
+                throw new ApplicationException("An error occurred while creating the category. Please try again later.", ex);
+            }
         }
 
         public async Task UpdateCategoryAsync(string id, CategoryDto categoryDto)
         {
-            var category = await Task.FromResult(_repository.GetById(id));
+            var category = await _repository.GetByIdAsync(id);
             if (category == null || category.IsDeleted)
             {
-                throw new ArgumentException("Category not found");
+                throw new NotFoundException($"Category with ID {id} not found");
             }
 
             category.UpdateDetails(
@@ -86,7 +99,7 @@ namespace TTEcommerce.Application.Services
                 categoryDto.Description
             );
 
-            await Task.CompletedTask; // Simulating async operation
+            await _repository.UpdateAsync(category);
         }
 
         public async Task DeleteCategoryAsync(string id)
@@ -94,11 +107,11 @@ namespace TTEcommerce.Application.Services
             var category = await _repository.GetByIdAsync(id);
             if (category == null || category.IsDeleted)
             {
-                throw new ArgumentException("Category not found");
+                throw new NotFoundException($"Category with ID {id} not found");
             }
 
             category.Delete();
-            await Task.CompletedTask; // Simulating async operation
+            await _repository.UpdateAsync(category);
         }
     }
 }

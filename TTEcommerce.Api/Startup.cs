@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TTEcommerce.Domain.Core;
-using TTEcommerce.Domain.ProductAggregate;
 using TTEcommerce.Infrastructure;
-using TTEcommerce.Infrastructure.Repositories;
-using TTEcommerce.Application.Interfaces;
-using TTEcommerce.Application.Services;
-using TTEcommerce.Application.Dtos;
-
+using TTEcommerce.Application.Extensions;
+using TTEcommerce.Api.Middleware;
 
 namespace TTEcommerce.Api
 {
@@ -33,12 +28,7 @@ namespace TTEcommerce.Api
                         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                         options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
                     });
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IRepository<Product>, Repository<Product>>();
-            services.AddScoped<IRepository<Category>, Repository<Category>>();
-            services.AddScoped<IDapperRepository<ProductDto>, DapperRepository<ProductDto>>();
-            services.AddScoped<IDapperRepository<CategoryDto>, DapperRepository<CategoryDto>>();
+            services.AddApplication();
             services.AddDbContext<DbContext, AppDbContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
         }
 
@@ -48,6 +38,10 @@ namespace TTEcommerce.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseMiddleware<ExceptionMiddleware>();
             }
 
             app.UseRouting();

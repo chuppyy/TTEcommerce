@@ -10,15 +10,8 @@
             "args": [],
             "cwd": "${workspaceFolder}/TTEcommerce.Api",
             "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
             },
             "dotnetRunMessages": true
         },

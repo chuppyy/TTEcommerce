@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TTEcommerce.Application.Dtos;
@@ -11,10 +12,12 @@ namespace TTEcommerce.Api.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IMapper _mapper;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, IMapper mapper)
         {
             _productService = productService;
+            _mapper = mapper;
         }
 
         [HttpGet("{id}")]
@@ -53,7 +56,7 @@ namespace TTEcommerce.Api.Controllers
         public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] ProductDto productDto)
         {
             var createdProduct = await _productService.CreateProductAsync(productDto);
-            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, _mapper.Map<ProductDto>(createdProduct));
         }
 
         [HttpPut("{id}")]

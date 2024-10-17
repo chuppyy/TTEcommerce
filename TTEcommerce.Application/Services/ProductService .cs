@@ -5,6 +5,8 @@ using TTEcommerce.Domain.Core;
 using TTEcommerce.Domain.ProductAggregate;
 using TTEcommerce.Application.Interfaces;
 using TTEcommerce.Application.Dtos;
+using TTEcommerce.Application.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace TTEcommerce.Application.Services
 {
@@ -13,15 +15,18 @@ namespace TTEcommerce.Application.Services
         private readonly IDapperRepository<ProductDto> _dapperRepository;
         private readonly IRepository<Product> _repository;
         private readonly IRepository<Category> _categoryRepository;
+        private readonly ILogger<ProductService> _logger;
 
         public ProductService(
             IDapperRepository<ProductDto> dapperRepository,
             IRepository<Product> repository,
-            IRepository<Category> categoryRepository)
+            IRepository<Category> categoryRepository,
+            ILogger<ProductService> logger)
         {
             _dapperRepository = dapperRepository;
             _repository = repository;
             _categoryRepository = categoryRepository;
+            _logger = logger;
         }
 
         // Read operations using Dapper
@@ -67,7 +72,7 @@ namespace TTEcommerce.Application.Services
 
             return new PaginatedResult<ProductDto>(products, totalCount, pageSize);
         }
-        
+
         public async Task<IEnumerable<ProductDto>> GetProductsByCategoryAsync(string categoryId)
         {
             return await _dapperRepository.QueryAsync(
@@ -84,11 +89,10 @@ namespace TTEcommerce.Application.Services
             var category = await _categoryRepository.GetByIdAsync(productDto.CategoryId);
             if (category == null)
             {
-                throw new ArgumentException("Invalid category ID");
+                throw new NotFoundException($"Category with ID {productDto.CategoryId} not found");
             }
 
             var product = new Product(
-
                 productDto.Name,
                 productDto.Description,
                 productDto.ImageUrl,
@@ -105,13 +109,13 @@ namespace TTEcommerce.Application.Services
             var product = await _repository.GetByIdAsync(id);
             if (product == null || product.IsDeleted)
             {
-                throw new ArgumentException("Product not found");
+                throw new NotFoundException($"Product with ID {id} not found");
             }
 
             var category = await _categoryRepository.GetByIdAsync(productDto.CategoryId);
             if (category == null)
             {
-                throw new ArgumentException("Invalid category ID");
+                throw new NotFoundException($"Category with ID {productDto.CategoryId} not found");
             }
 
             product.UpdateDetails(
@@ -132,7 +136,7 @@ namespace TTEcommerce.Application.Services
             var product = await _repository.GetByIdAsync(id);
             if (product == null || product.IsDeleted)
             {
-                throw new ArgumentException("Product not found");
+                throw new NotFoundException($"Product with ID {id} not found");
             }
 
             product.Delete();
